@@ -11,7 +11,7 @@ class StaffController extends Controller
 {
     public function index()
     {
-        return User::whereIn('role', ['admin', 'chef', 'waiter'])->get();
+        return User::whereIn('role', ['admin', 'chef', 'waiter'])->append('image_url')->get();
     }
 
     public function store(Request $request)

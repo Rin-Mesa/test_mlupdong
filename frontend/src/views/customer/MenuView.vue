@@ -229,7 +229,7 @@ export default {
     return {
       table: null,
       menuItems: [],
-      categories: ['All', 'Food', 'Drink', 'Sweet Treats', 'Specials'],
+      categories: ['All', 'Main Course', 'Appetizers', 'Beverages', 'Desserts'],
       activeCategory: 'All',
       searchQuery: '',
       cart: [],
@@ -273,13 +273,7 @@ export default {
     async fetchMenu() {
       try {
         const res = await axios.get('/api/menu-items');
-        // If image_path is there, build full URL, else use placeholder
-        this.menuItems = res.data.map(item => ({
-          ...item,
-          image_url: item.image_path 
-            ? `http://127.0.0.1:8000/storage/${item.image_path.replace('public/', '')}` 
-            : `https://placehold.co/600x400/22c55e/ffffff?text=${encodeURIComponent(item.name)}`
-        }));
+        this.menuItems = res.data;
       } catch (err) {
         console.error('Error fetching menu', err);
       }

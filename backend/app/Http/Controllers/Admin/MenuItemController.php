@@ -11,7 +11,7 @@ class MenuItemController extends Controller
 {
     public function index()
     {
-        return MenuItem::all();
+        return MenuItem::all()->append('image_url');
     }
 
     public function store(Request $request)
@@ -34,7 +34,7 @@ class MenuItemController extends Controller
 
         $menuItem = MenuItem::create($data);
 
-        return response()->json($menuItem, 201);
+        return response()->json($menuItem->append('image_url'), 201);
     }
 
     public function update(Request $request, $id)
@@ -63,7 +63,7 @@ class MenuItemController extends Controller
 
         $menuItem->update($data);
 
-        return response()->json($menuItem);
+        return response()->json($menuItem->append('image_url'));
     }
 
     public function destroy($id)

@@ -141,11 +141,18 @@ export default {
       this.loading = true;
       this.error = null;
       try {
+        console.log('Attempting login with:', {
+          email: this.form.email,
+          role: this.selectedRole.id
+        });
+        
         const response = await axios.post('/api/login', {
           email: this.form.email,
           password: this.form.password,
           role: this.selectedRole.id
         });
+
+        console.log('Login response:', response);
 
         const { user, token } = response.data;
         
@@ -158,7 +165,19 @@ export default {
         
         this.$router.push(this.selectedRole.path);
       } catch (err) {
-        this.error = err.response?.data?.message || 'Verification failed. Check your credentials.';
+        console.error('Login error:', err);
+        console.error('Error response:', err.response);
+        
+        if (err.response) {
+          // The server responded with an error status
+          this.error = err.response.data?.message || `Server error: ${err.response.status}`;
+        } else if (err.request) {
+          // The request was made but no response was received
+          this.error = 'Network error - unable to connect to server';
+        } else {
+          // Something else happened
+          this.error = err.message || 'Verification failed. Check your credentials.';
+        }
       } finally {
         this.loading = false;
       }

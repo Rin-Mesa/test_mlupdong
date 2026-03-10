@@ -16,7 +16,19 @@ class TableController extends Controller
      */
     public function index()
     {
-        return response()->json(Table::with('activeOrder.items.menuItem')->get());
+        $tables = Table::with(['activeOrder.items.menuItem'])->get();
+        
+        // Convert to array to ensure all fields are included
+        $tablesArray = $tables->map(function ($table) {
+            $tableArray = $table->toArray();
+            // Ensure active_order field exists
+            if (!isset($tableArray['active_order'])) {
+                $tableArray['active_order'] = null;
+            }
+            return $tableArray;
+        });
+        
+        return response()->json($tablesArray);
     }
 
     /**

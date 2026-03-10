@@ -185,12 +185,7 @@ export default {
       this.loading = true;
       try {
         const res = await axios.get('/api/menu-items');
-        this.items = res.data.map(item => ({
-          ...item,
-          image_url: item.image_url && !item.image_url.startsWith('http') 
-            ? `http://127.0.0.1:8000${item.image_url}` 
-            : item.image_url
-        }));
+        this.items = res.data;
       } catch (err) {
         console.error(err);
       } finally {
@@ -225,7 +220,14 @@ export default {
       this.submitting = true;
       const formData = new FormData();
       Object.keys(this.form).forEach(key => {
-        if (this.form[key] !== null) formData.append(key, this.form[key]);
+        if (this.form[key] !== null && this.form[key] !== undefined) {
+          // Convert booleans to 0/1 so PHP reads them correctly
+          if (typeof this.form[key] === 'boolean') {
+            formData.append(key, this.form[key] ? '1' : '0');
+          } else {
+            formData.append(key, this.form[key]);
+          }
+        }
       });
 
       try {
@@ -248,9 +250,12 @@ export default {
     async toggleAvailability(item) {
       try {
         item.is_available = !item.is_available;
-        await axios.put(`/api/menu-items/${item.id}`, { 
-          ...item, 
-          is_available: item.is_available 
+        await axios.put(`/api/menu-items/${item.id}`, {
+          name: item.name,
+          price: item.price,
+          category: item.category,
+          description: item.description,
+          is_available: item.is_available ? 1 : 0
         });
       } catch (err) {
         item.is_available = !item.is_available; // rollback

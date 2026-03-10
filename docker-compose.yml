@@ -1,0 +1,113 @@
+version: '3.8'
+
+services:
+  # Laravel Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: mlupdong_backend
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./backend:/var/www/html
+      - ./backend/storage/app:/var/www/html/storage/app
+    networks:
+      - mlupdong_network
+    depends_on:
+      - mysql
+      - redis
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_NAME=MlupDong
+      - APP_ENV=local
+      - APP_KEY=base64:YOUR_APP_KEY_HERE
+      - APP_DEBUG=true
+      - APP_URL=http://localhost:8000
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=mlupdong
+      - DB_USERNAME=root
+      - DB_PASSWORD=rootpassword
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+
+  # Vue Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: mlupdong_frontend
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - mlupdong_network
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:8000/api
+    depends_on:
+      - backend
+
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: mlupdong_mysql
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=mlupdong
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_PASSWORD=rootpassword
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    networks:
+      - mlupdong_network
+    ports:
+      - "3306:3306"
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: mlupdong_redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - mlupdong_network
+    ports:
+      - "6379:6379"
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: mlupdong_nginx
+    restart: unless-stopped
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/sites:/etc/nginx/sites-available
+    networks:
+      - mlupdong_network
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+      - frontend
+
+networks:
+  mlupdong_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local

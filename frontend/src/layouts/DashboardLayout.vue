@@ -89,13 +89,14 @@ import {
   Armchair, 
   BarChart3, 
   Settings,
-  LayoutGrid
+  LayoutGrid,
+  QrCode
 } from 'lucide-vue-next';
 
 export default {
   name: 'DashboardLayout',
   components: {
-    LayoutDashboard, UtensilsCrossed, ChefHat, Users, Armchair, BarChart3, Settings, LayoutGrid
+    LayoutDashboard, UtensilsCrossed, ChefHat, Users, Armchair, BarChart3, Settings, LayoutGrid, QrCode
   },
   data() {
     return {
@@ -106,6 +107,7 @@ export default {
         { id: 'menu', label: 'Menu', icon: 'UtensilsCrossed', path: '/menu-manager', roles: ['admin'] },
         { id: 'staff', label: 'Staff', icon: 'Users', path: '/staff', roles: ['admin'] },
         { id: 'tables', label: 'Tables', icon: 'Armchair', path: '/tables', roles: ['admin'] },
+        { id: 'qr-generator', label: 'QR Generator', icon: 'QrCode', path: '/qr-generator', roles: ['admin'] },
         { id: 'reports', label: 'Sales Reports', icon: 'BarChart3', path: '/reports', roles: ['admin'] },
         { id: 'settings', label: 'Settings', icon: 'Settings', path: '/settings', roles: ['admin'] },
         { id: 'floor-plan', label: 'Floor Plan', icon: 'LayoutGrid', path: '/floor-plan', roles: ['waiter'] },

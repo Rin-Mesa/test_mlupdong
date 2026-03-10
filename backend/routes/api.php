@@ -52,3 +52,11 @@ Route::delete('/orders/{id}', [OrderController::class, 'destroy']);
 // Table details for customer
 use App\Http\Controllers\Admin\TableController as AdminTableController;
 Route::get('/tables/token/{token}', [AdminTableController::class, 'showByToken']);
+
+// QR Code API routes
+use App\Http\Controllers\QRCodeController;
+Route::prefix('qr')->group(function () {
+    Route::post('/generate',        [QRCodeController::class, 'generate']);
+    Route::post('/bulk',            [QRCodeController::class, 'bulk']);
+    Route::get('/download/{table}', [QRCodeController::class, 'download']);
+});

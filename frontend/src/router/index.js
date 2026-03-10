@@ -60,6 +60,12 @@ const routes = [
                 name: 'settings',
                 component: () => import('../views/Settings.vue'),
                 meta: { role: 'admin' }
+            },
+            {
+                path: 'qr-generator',
+                name: 'qr-generator',
+                component: () => import('../views/MenuQRCode.vue'),
+                meta: { role: 'admin' }
             }
         ]
     },
